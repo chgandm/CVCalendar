@@ -113,7 +113,7 @@ extension CVCalendarMonthView {
         
         safeExecuteBlock({
             for i in 0..<self.numberOfWeeks! {
-                let weekView = CVCalendarWeekView(monthView: self, index: i)
+                let weekView = CVCalendarWeekView(monthView: self, index: i, currentSelection: self.calendarView.coordinator.currentSelectionSet())
                 
                 self.safeExecuteBlock({
                     self.weekViews!.append(weekView)
@@ -172,7 +172,12 @@ extension CVCalendarMonthView {
     
     func didTouchInteractiveView(recognizer: UITapGestureRecognizer) {
         let location = recognizer.locationInView(self.interactiveView)
-        touchController.receiveTouchLocation(location, inMonthView: self, withSelectionType: .Single)
+        var shouldAllowMultipleDateSelection = calendarView.shouldAllowMultipleDateSelection!
+        if shouldAllowMultipleDateSelection {
+            touchController.receiveTouchLocation(location, inMonthView: self, withSelectionType: .Multiple)
+        } else {
+            touchController.receiveTouchLocation(location, inMonthView: self, withSelectionType: .Single)
+        }
     }
 }
 

@@ -62,6 +62,22 @@ class CVCalendarView: UIView {
         }
     }
     
+    var shouldAllowMultipleDateSelection: Bool! {
+        if let delegate = delegate, let shouldAllowMultiple = delegate.shouldAllowMultipleDateSelection?() {
+            return shouldAllowMultiple
+        } else {
+            return false
+        }
+    }
+    
+    var autoHighlightCurrentDay: Bool! {
+        if let delegate = delegate, let autoHighlightCurrentDay = delegate.autoHighlightCurrentDay?() {
+            return autoHighlightCurrentDay
+        } else {
+            return false
+        }
+    }
+    
     var presentedDate: Date! {
         didSet {
             if let oldValue = oldValue {
@@ -210,6 +226,15 @@ extension CVCalendarView {
             presentedDate = dayView.date
             delegate?.didSelectDayView?(dayView)
             controller.performedDayViewSelection(dayView) // TODO: Update to range selection
+        }
+    }
+    
+    func didDeSelectDayView(dayView: CVCalendarDayView) {
+        if let controller = contentController {
+            presentedDate = dayView.date
+            delegate?.didDeSelectDayView?(dayView)
+            // TODO MAT: Investigate if there's a change needed here
+            controller.performedDayViewSelection(dayView)
         }
     }
 }

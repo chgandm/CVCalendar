@@ -130,6 +130,10 @@ class CVCalendarMonthContentViewController: CVCalendarContentViewController {
         }
     }
     
+    /**
+        He're we're deciding whether to present the next or previous month in case of leading/trailing
+        days that are visible.
+    */
     override func performedDayViewSelection(dayView: DayView) {
         if dayView.isOut {
             if dayView.date.day > 20 {
@@ -260,6 +264,8 @@ extension CVCalendarMonthContentViewController {
         
         let newDate = NSCalendar.currentCalendar().dateFromComponents(components)!
         let frame = scrollView.bounds
+        // TODO MAT: Here we should provide the MonthView with the cached data.
+        // calendarView.coordinator.currentSelectionSet()
         let monthView = MonthView(calendarView: calendarView, date: newDate)
         
         monthView.updateAppearance(frame)
@@ -384,6 +390,11 @@ extension CVCalendarMonthContentViewController {
     
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         if let presented = monthViews[Presented] {
+            // TODO MAT: Save before transitioning....
+            println("Selected dates on this view (to SAVE!):")
+            for dayView in calendarView.coordinator.currentSelectionSet() {
+                println("- Date: " + dayView.date.commonDescription)
+            }
             prepareTopMarkersOnMonthView(presented, hidden: true)
         }
     }
@@ -397,7 +408,7 @@ extension CVCalendarMonthContentViewController {
             }
         }
         
-        updateSelection()
+        // updateSelection()
         updateLayoutIfNeeded()
         pageLoadingEnabled = true
         direction = .None

@@ -47,13 +47,14 @@ class CVCalendarWeekView: UIView {
         }
     }
     
+    var currentSelection: Set<DayView>!
+    
     // MARK: - Initialization
     
-    init(monthView: CVCalendarMonthView, index: Int) {
-        
-        
+    init(monthView: CVCalendarMonthView, index: Int, currentSelection: Set<DayView>) {
         self.monthView = monthView
         self.index = index
+        self.currentSelection = currentSelection
         
         if let size = monthView.calendarView.weekViewSize {
             super.init(frame: CGRectMake(0, CGFloat(index) * size.height, size.width, size.height))
@@ -179,8 +180,20 @@ extension CVCalendarWeekView {
     func createDayViews() {
         dayViews = [CVCalendarDayView]()
         for i in 1...7 {
-            let dayView = CVCalendarDayView(weekView: self, weekdayIndex: i)
-            
+            var dayView = CVCalendarDayView(weekView: self, weekdayIndex: i)
+            // TODO MAT: Fix the bug for the current day which gets highlighted automatically once we navigate back to the current day.
+            if (!dayView.isOut) { // the logic only works for non-out dates
+                for alreadySelected in currentSelection {
+                    if dayView != alreadySelected {
+                        if alreadySelected.date.commonDescription == dayView.date.commonDescription {
+                            dayView = alreadySelected
+                            dayView.weekView = self;
+                            //dayView.frame = frame;
+                            NSLog("Reusing existing for date %@", alreadySelected.date.commonDescription)
+                        }
+                    }
+                }
+            }
             safeExecuteBlock({
                 self.dayViews!.append(dayView)
                 }, collapsingOnNil: true, withObjects: dayViews)

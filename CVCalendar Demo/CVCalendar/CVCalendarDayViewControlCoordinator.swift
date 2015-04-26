@@ -13,6 +13,10 @@ class CVCalendarDayViewControlCoordinator {
     private var selectionSet = Set<DayView>()
     private unowned let calendarView: CalendarView
     
+    func currentSelectionSet() -> Set<DayView> {
+        return selectionSet
+    }
+    
     // MARK: - Public properties
     weak var selectedDayView: CVCalendarDayView?
     var animator: CVCalendarViewAnimator! {
@@ -90,6 +94,24 @@ extension CVCalendarDayViewControlCoordinator {
                 presentSelectionOnDayView(dayView)
             }
         } 
+    }
+
+    /**
+        Allows for multiple selected dates
+    */
+    func performDayViewMultipleSelection(dayView: DayView) -> Bool {
+        if selectionSet.contains(dayView) {
+            selectionSet.remove(dayView)
+            presentDeselectionOnDayView(dayView)
+            selectedDayView = nil
+            return false;
+        } else {
+            selectionSet.insert(dayView)
+            presentSelectionOnDayView(dayView)
+            selectedDayView = dayView
+            return true;
+        }
+        
     }
     
     func performDayViewRangeSelection(dayView: DayView) {

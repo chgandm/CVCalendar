@@ -148,6 +148,7 @@ class CVCalendarDayView: UIView {
 extension CVCalendarDayView {
     func labelSetup() {
         let appearance = calendarView.appearance
+        let autoHighlightCurrentDay = calendarView!.autoHighlightCurrentDay!
         
         dayLabel = UILabel()
         dayLabel!.text = String(date.day)
@@ -161,7 +162,7 @@ extension CVCalendarDayView {
             color = appearance.dayLabelWeekdayOutTextColor
         } else if isCurrentDay {
             let coordinator = calendarView.coordinator
-            if coordinator.selectedDayView == nil {
+            if coordinator.selectedDayView == nil && autoHighlightCurrentDay {
                 let touchController = calendarView.touchController
                 touchController.receiveTouchOnDayView(self)
                 calendarView.didSelectDayView(self)
@@ -383,7 +384,7 @@ extension CVCalendarDayView {
         var shape: CVShape!
         
         switch type {
-        case let .Single:
+        case let .Single, let .Multiple:
             shape = .Circle
             if isCurrentDay {
                 dayLabel?.textColor = appearance.dayLabelPresentWeekdaySelectedTextColor!
@@ -480,7 +481,7 @@ extension CVCalendarDayView {
                 hidden = false
             }
         }
-        
+
         if circleView != nil {
             setSelectedWithType(.Single)
         }

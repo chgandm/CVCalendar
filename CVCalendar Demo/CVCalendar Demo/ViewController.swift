@@ -96,6 +96,10 @@ extension ViewController: CVCalendarViewDelegate {
         return .Sunday
     }
     
+    func shouldAllowMultipleDateSelection() -> Bool {
+        return true
+    }
+    
     func shouldShowWeekdaysOut() -> Bool {
         return shouldShowDaysOut
     }
@@ -103,6 +107,12 @@ extension ViewController: CVCalendarViewDelegate {
     func didSelectDayView(dayView: CVCalendarDayView) {
         let date = dayView.date
         println("\(calendarView.presentedDate.commonDescription) is selected!")
+    }
+    
+    
+    func didDeSelectDayView(dayView: CVCalendarDayView) {
+        let date = dayView.date
+        println("\(calendarView.presentedDate.commonDescription) is DE-selected!")
     }
     
     func presentedDateUpdated(date: CVDate) {

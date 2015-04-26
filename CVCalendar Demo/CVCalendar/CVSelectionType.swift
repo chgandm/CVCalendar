@@ -11,5 +11,6 @@ import UIKit
 enum CVSelectionType {
     case Single
     case Range(CVRange)
+    case Multiple
 }
 
