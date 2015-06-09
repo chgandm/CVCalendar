@@ -9,12 +9,14 @@
 import UIKit
 
 @objc
-protocol CVCalendarViewDelegate {
+public protocol CVCalendarViewDelegate {
     func presentationMode() -> CalendarMode
     func firstWeekday() -> Weekday
     
+    optional func shouldSelectDateOnViewChange() -> Bool
     optional func shouldAllowMultipleDateSelection() -> Bool
     optional func shouldShowWeekdaysOut() -> Bool
+    optional func didTransitionToDate(date: CVDate)
     optional func didSelectDayView(dayView: DayView)
     optional func didDeSelectDayView(dayView: DayView)
     optional func presentedDateUpdated(date: Date)

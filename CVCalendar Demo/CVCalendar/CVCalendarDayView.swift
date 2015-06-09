@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CVCalendarDayView: UIView {
+public class CVCalendarDayView: UIView {
     // MARK: - Public properties
     let weekdayIndex: Int!
     weak var weekView: CVCalendarWeekView!
@@ -45,7 +45,7 @@ class CVCalendarDayView: UIView {
         }
     }
     
-    override var frame: CGRect {
+    override public var frame: CGRect {
         didSet {
             if oldValue != frame {
                 circleView?.setNeedsDisplay()
@@ -55,7 +55,7 @@ class CVCalendarDayView: UIView {
         }
     }
     
-    override var hidden: Bool {
+    override public var hidden: Bool {
         didSet {
             userInteractionEnabled = hidden ? false : true
         }
@@ -138,7 +138,7 @@ class CVCalendarDayView: UIView {
         return CVDate(day: day, month: month, week: week, year: year)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -384,7 +384,7 @@ extension CVCalendarDayView {
         var shape: CVShape!
         
         switch type {
-        case let .Single, let .Multiple:
+        case let .Single:
             shape = .Circle
             if isCurrentDay {
                 dayLabel?.textColor = appearance.dayLabelPresentWeekdaySelectedTextColor!
@@ -398,7 +398,7 @@ extension CVCalendarDayView {
                 backgroundAlpha = appearance.dayLabelWeekdaySelectedBackgroundAlpha
             }
             
-        case let .Range:
+        case let .Range, let .Multiple:
             shape = .Rect
             if isCurrentDay {
                 dayLabel?.textColor = appearance.dayLabelPresentWeekdayHighlightedTextColor!
@@ -457,6 +457,7 @@ extension CVCalendarDayView {
             moveDotMarkerBack(true, coloring: false)
             
             if clearing {
+                circleView = nil // if we don't nil the circle view it will "reappear" when the device transitions to another orientation
                 circleView?.removeFromSuperview()
             }
         }
@@ -483,7 +484,11 @@ extension CVCalendarDayView {
         }
 
         if circleView != nil {
-            setSelectedWithType(.Single)
+            if calendarView.shouldAllowMultipleDateSelection != nil && calendarView.shouldAllowMultipleDateSelection == true {
+                setSelectedWithType(.Multiple)
+            } else {
+                setSelectedWithType(.Single)
+            }
         }
     }
 }

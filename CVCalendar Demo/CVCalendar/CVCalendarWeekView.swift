@@ -47,14 +47,14 @@ class CVCalendarWeekView: UIView {
         }
     }
     
-    var currentSelection: Set<DayView>!
+    var selectionManager: CVSelectionManager!
     
     // MARK: - Initialization
     
-    init(monthView: CVCalendarMonthView, index: Int, currentSelection: Set<DayView>) {
+    init(monthView: CVCalendarMonthView, index: Int, selectionManager: CVSelectionManager) {
         self.monthView = monthView
         self.index = index
-        self.currentSelection = currentSelection
+        self.selectionManager = selectionManager
         
         if let size = monthView.calendarView.weekViewSize {
             super.init(frame: CGRectMake(0, CGFloat(index) * size.height, size.width, size.height))
@@ -181,19 +181,29 @@ extension CVCalendarWeekView {
         dayViews = [CVCalendarDayView]()
         for i in 1...7 {
             var dayView = CVCalendarDayView(weekView: self, weekdayIndex: i)
-            // TODO MAT: Fix the bug for the current day which gets highlighted automatically once we navigate back to the current day.
-            if (!dayView.isOut) { // the logic only works for non-out dates
-                for alreadySelected in currentSelection {
-                    if dayView != alreadySelected {
-                        if alreadySelected.date.commonDescription == dayView.date.commonDescription {
-                            dayView = alreadySelected
-                            dayView.weekView = self;
-                            //dayView.frame = frame;
-                            NSLog("Reusing existing for date %@", alreadySelected.date.commonDescription)
+            let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+            dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                var dayViewsToUpdate = [CVCalendarDayView]()
+                //if (!dayView.isOut) { // the logic only works for non-out dates
+                    if (self.selectionManager.isAlreadySelected(dayView.date)) {
+                        dayViewsToUpdate.append(dayView)
+                    }
+                //}
+                dispatch_async(dispatch_get_main_queue()) {
+                    for dv in dayViewsToUpdate {
+                    dayView = dv
+                    dayView.weekView = self;
+                        if self.calendarView.shouldAllowMultipleDateSelection != nil && self.calendarView.shouldAllowMultipleDateSelection! == true {
+                            dayView.setSelectedWithType(SelectionType.Multiple)
+                        } else {
+                            dayView.setSelectedWithType(SelectionType.Single)
                         }
+                    //dayView.frame = frame;
                     }
                 }
             }
+
+
             safeExecuteBlock({
                 self.dayViews!.append(dayView)
                 }, collapsingOnNil: true, withObjects: dayViews)

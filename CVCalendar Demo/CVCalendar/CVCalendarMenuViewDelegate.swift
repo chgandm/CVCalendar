@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol CVCalendarMenuViewDelegate {
+public protocol CVCalendarMenuViewDelegate {
     func firstWeekday() -> Weekday
 }

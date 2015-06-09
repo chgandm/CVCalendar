@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CVDate: NSObject {
+public class CVDate: NSObject {
     private let date: NSDate
     
     let year: Int
@@ -59,18 +59,22 @@ extension CVDate {
 }
 
 extension CVDate {
-    var globalDescription: String {
+    public var globalDescription: String {
         get {
             let month = dateFormattedStringWithFormat("MMMM", fromDate: date)
             return "\(month), \(year)"
         }
     }
     
-    var commonDescription: String {
+    public var commonDescription: String {
         get {
             let month = dateFormattedStringWithFormat("MMMM", fromDate: date)
             return "\(day) \(month), \(year)"
         }
+    }
+    
+    public var identifier: String {
+        return "\(day)\(month)\(year)"
     }
 }
 

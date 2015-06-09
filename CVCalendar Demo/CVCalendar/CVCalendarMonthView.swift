@@ -113,7 +113,7 @@ extension CVCalendarMonthView {
         
         safeExecuteBlock({
             for i in 0..<self.numberOfWeeks! {
-                let weekView = CVCalendarWeekView(monthView: self, index: i, currentSelection: self.calendarView.coordinator.currentSelectionSet())
+                let weekView = CVCalendarWeekView(monthView: self, index: i, selectionManager: self.calendarView.coordinator.getSelectionManager())
                 
                 self.safeExecuteBlock({
                     self.weekViews!.append(weekView)

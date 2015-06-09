@@ -8,7 +8,8 @@
 
 import UIKit
 
-@objc enum CVCalendarViewPresentationMode: Int {
+@objc
+public enum CVCalendarViewPresentationMode: Int {
     case MonthView
     case WeekView
 }

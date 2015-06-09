@@ -137,8 +137,6 @@ extension CVAuxiliaryView {
         let appearance = dayView.calendarView.appearance
         let offset = appearance.spaceBetweenDayViews!
         
-        println("offset = \(offset)")
-        
         let path = UIBezierPath(rect: CGRectMake(0 - offset, midY - radius, bounds.width + offset / 2, radius * 2))
         
         return path

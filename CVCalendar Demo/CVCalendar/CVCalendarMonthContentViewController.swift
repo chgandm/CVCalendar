@@ -99,6 +99,8 @@ class CVCalendarMonthContentViewController: CVCalendarContentViewController {
             if pageLoadingEnabled  {
                 pageLoadingEnabled = false
                 
+                previous.frame.origin.x += self.scrollView.frame.width
+                
                 monthViews[Following]?.removeFromSuperview()
                 replaceMonthView(previous, withIdentifier: Presented, animatable: true)
                 replaceMonthView(presented, withIdentifier: Following, animatable: false)
@@ -167,7 +169,9 @@ class CVCalendarMonthContentViewController: CVCalendarContentViewController {
                     }) { _ in
                         extra.removeFromSuperview()
                         self.insertMonthView(self.getPreviousMonth(previous.date), withIdentifier: self.Previous)
-                        self.updateSelection()
+                        if (self.calendarView.shouldSelectDateOnViewChange) {
+                            self.updateSelection()
+                        }
                         self.presentationEnabled = true
                         
                         for monthView in self.monthViews.values {
@@ -197,7 +201,9 @@ class CVCalendarMonthContentViewController: CVCalendarContentViewController {
                     }) { _ in
                         extra.removeFromSuperview()
                         self.insertMonthView(self.getFollowingMonth(following.date), withIdentifier: self.Following)
-                        self.updateSelection()
+                        if (self.calendarView.shouldSelectDateOnViewChange) {
+                            self.updateSelection()
+                        }
                         self.presentationEnabled = true
                         
                         for monthView in self.monthViews.values {
@@ -264,12 +270,11 @@ extension CVCalendarMonthContentViewController {
         
         let newDate = NSCalendar.currentCalendar().dateFromComponents(components)!
         let frame = scrollView.bounds
-        // TODO MAT: Here we should provide the MonthView with the cached data.
-        // calendarView.coordinator.currentSelectionSet()
         let monthView = MonthView(calendarView: calendarView, date: newDate)
         
         monthView.updateAppearance(frame)
-        
+        self.calendarView.didTransitionToDate(CVDate(date: firstDate))
+
         return monthView
     }
     
@@ -284,6 +289,7 @@ extension CVCalendarMonthContentViewController {
         let monthView = MonthView(calendarView: calendarView, date: newDate)
         
         monthView.updateAppearance(frame)
+        self.calendarView.didTransitionToDate(CVDate(date: firstDate))
         
         return monthView
     }
@@ -390,11 +396,6 @@ extension CVCalendarMonthContentViewController {
     
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         if let presented = monthViews[Presented] {
-            // TODO MAT: Save before transitioning....
-            println("Selected dates on this view (to SAVE!):")
-            for dayView in calendarView.coordinator.currentSelectionSet() {
-                println("- Date: " + dayView.date.commonDescription)
-            }
             prepareTopMarkersOnMonthView(presented, hidden: true)
         }
     }
@@ -407,8 +408,13 @@ extension CVCalendarMonthContentViewController {
             default: break
             }
         }
-        
-        // updateSelection()
+        if (self.calendarView.shouldSelectDateOnViewChange) {
+            updateSelection()
+        }
+        // otherwise we have "unselectable" dayviews (the ones on new lines in case of extra long months)
+        if let hasPresentedMonthView = monthViews[Presented] {
+            self.presentedMonthView = hasPresentedMonthView
+        }
         updateLayoutIfNeeded()
         pageLoadingEnabled = true
         direction = .None

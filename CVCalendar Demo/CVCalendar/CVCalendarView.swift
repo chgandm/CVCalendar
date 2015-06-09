@@ -12,13 +12,13 @@ typealias WeekView = CVCalendarWeekView
 typealias CalendarView = CVCalendarView
 typealias MonthView = CVCalendarMonthView
 typealias Manager = CVCalendarManager
-typealias DayView = CVCalendarDayView
+public typealias DayView = CVCalendarDayView
 typealias ContentController = CVCalendarContentViewController
 typealias Appearance = CVCalendarViewAppearance
 typealias Coordinator = CVCalendarDayViewControlCoordinator
-typealias Date = CVDate
-typealias CalendarMode = CVCalendarViewPresentationMode
-typealias Weekday = CVCalendarWeekday
+public typealias Date = CVDate
+public typealias CalendarMode = CVCalendarViewPresentationMode
+public typealias Weekday = CVCalendarWeekday
 typealias Animator = CVCalendarViewAnimator
 typealias Delegate = CVCalendarViewDelegate
 typealias AppearanceDelegate = CVCalendarViewAppearanceDelegate
@@ -30,7 +30,7 @@ typealias MenuViewDelegate = CVCalendarMenuViewDelegate
 typealias TouchController = CVCalendarTouchController
 typealias SelectionType = CVSelectionType
 
-class CVCalendarView: UIView {
+public class CVCalendarView: UIView {
     // MARK: - Public properties
     var manager: Manager!
     var appearance: Appearance!
@@ -43,6 +43,10 @@ class CVCalendarView: UIView {
     var (weekViewSize: CGSize?, dayViewSize: CGSize?)
     
     private var validated = false
+    
+    public func setValidated(validated: Bool) {
+        self.validated = validated
+    }
     
     var firstWeekday: Weekday {
         get {
@@ -65,6 +69,14 @@ class CVCalendarView: UIView {
     var shouldAllowMultipleDateSelection: Bool! {
         if let delegate = delegate, let shouldAllowMultiple = delegate.shouldAllowMultipleDateSelection?() {
             return shouldAllowMultiple
+        } else {
+            return false
+        }
+    }
+    
+    var shouldSelectDateOnViewChange: Bool {
+        if let delegate = delegate, let shouldSelect = delegate.shouldSelectDateOnViewChange?() {
+            return shouldSelect
         } else {
             return false
         }
@@ -173,7 +185,7 @@ class CVCalendarView: UIView {
     }
 
     /// IB Initialization
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         hidden = true
     }
@@ -182,7 +194,7 @@ class CVCalendarView: UIView {
 // MARK: - Frames update
 
 extension CVCalendarView {
-    func commitCalendarViewUpdate() {
+    public func commitCalendarViewUpdate() {
         if let delegate = delegate, let contentController = contentController {
             let contentViewSize = contentController.bounds.size
             let selfSize = bounds.size
@@ -221,6 +233,10 @@ extension CVCalendarView {
 // MARK: - Coordinator callback
 
 extension CVCalendarView {
+    func didTransitionToDate(date: CVDate) {
+        delegate?.didTransitionToDate?(date)
+    }
+    
     func didSelectDayView(dayView: CVCalendarDayView) {
         if let controller = contentController {
             presentedDate = dayView.date
@@ -233,7 +249,6 @@ extension CVCalendarView {
         if let controller = contentController {
             presentedDate = dayView.date
             delegate?.didDeSelectDayView?(dayView)
-            // TODO MAT: Investigate if there's a change needed here
             controller.performedDayViewSelection(dayView)
         }
     }
@@ -254,11 +269,11 @@ extension CVCalendarView {
         contentController.togglePresentedDate(NSDate())
     }
     
-    func loadNextView() {
+    public func loadNextView() {
         contentController.presentNextView(nil)
     }
     
-    func loadPreviousView() {
+    public func loadPreviousView() {
         contentController.presentPreviousView(nil)
     }
     

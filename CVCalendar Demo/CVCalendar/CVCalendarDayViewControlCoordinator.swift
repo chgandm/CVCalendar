@@ -10,11 +10,11 @@ import UIKit
 
 class CVCalendarDayViewControlCoordinator {
     // MARK: - Non public properties
-    private var selectionSet = Set<DayView>()
+    private var selectionManager = CVSelectionManager()
     private unowned let calendarView: CalendarView
     
-    func currentSelectionSet() -> Set<DayView> {
-        return selectionSet
+    func getSelectionManager() -> CVSelectionManager {
+        return selectionManager
     }
     
     // MARK: - Public properties
@@ -40,18 +40,19 @@ extension CVCalendarDayViewControlCoordinator {
     
     func deselectionPerformedOnDayView(dayView: DayView) {
         if dayView != selectedDayView {
-            selectionSet.remove(dayView)
+            selectionManager.removeSelectedDate(dayView.date)
             dayView.setDeselectedWithClearing(true)
         }
     }
     
     func dequeueDayView(dayView: DayView) {
-        selectionSet.remove(dayView)
+        selectionManager.removeSelectedDate(dayView.date)
+        dayView.setDeselectedWithClearing(true)
     }
     
     func flush() {
         selectedDayView = nil
-        selectionSet.removeAll()
+        selectionManager.removeAll()
     }
 }
 
@@ -73,40 +74,31 @@ private extension CVCalendarDayViewControlCoordinator {
 
 extension CVCalendarDayViewControlCoordinator {
     func performDayViewSingleSelection(dayView: DayView) {
-        selectionSet.insert(dayView)
+        selectionManager.addSelectedDate(dayView.date)
         
-        if selectionSet.count > 1 {
-            let count = selectionSet.count-1
-            for dayViewInQueue in selectionSet {
-                if dayView != dayViewInQueue {
-                    if dayView.calendarView != nil {
-                        presentDeselectionOnDayView(dayViewInQueue)
-                    }
-                    
-                }
-                
-            }
-        }
-        
-        if let animator = animator {
+        if let selectedDayView = self.selectedDayView {
             if selectedDayView != dayView {
-                selectedDayView = dayView
-                presentSelectionOnDayView(dayView)
+                self.presentDeselectionOnDayView(self.selectedDayView!)
+                self.selectedDayView = dayView
+                self.presentSelectionOnDayView(self.selectedDayView!)
             }
-        } 
+        } else {
+            self.selectedDayView = dayView
+            self.presentSelectionOnDayView(self.selectedDayView!)
+        }
     }
 
     /**
         Allows for multiple selected dates
     */
     func performDayViewMultipleSelection(dayView: DayView) -> Bool {
-        if selectionSet.contains(dayView) {
-            selectionSet.remove(dayView)
+        if selectionManager.isAlreadySelected(dayView.date) {
+            selectionManager.removeSelectedDate(dayView.date)
             presentDeselectionOnDayView(dayView)
             selectedDayView = nil
             return false;
         } else {
-            selectionSet.insert(dayView)
+            selectionManager.addSelectedDate(dayView.date)
             presentSelectionOnDayView(dayView)
             selectedDayView = dayView
             return true;
