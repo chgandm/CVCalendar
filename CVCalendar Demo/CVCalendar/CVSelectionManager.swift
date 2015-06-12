@@ -9,18 +9,22 @@
 import Foundation
 
 public class CVSelectionManager {
-    private var selectionSet = Set<String>()
+    private var selectionSet = Set<CVDate>()
+    
+    public var selectedDates: Set<CVDate> {
+        return selectionSet
+    }
     
     func addSelectedDate(date: CVDate) {
-        selectionSet.insert(date.identifier)
+        selectionSet.insert(date)
     }
     
     func removeSelectedDate(date: CVDate) {
-        selectionSet.remove(date.identifier)
+        selectionSet.remove(date)
     }
     
     func isAlreadySelected(date:CVDate) -> Bool {
-        return selectionSet.contains(date.identifier)
+        return selectionSet.contains(date)
     }
     
     func removeAll() {

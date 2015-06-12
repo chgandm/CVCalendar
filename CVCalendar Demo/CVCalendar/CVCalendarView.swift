@@ -238,17 +238,16 @@ extension CVCalendarView {
     }
     
     func didSelectDayView(dayView: CVCalendarDayView) {
+        presentedDate = dayView.date
+        delegate?.didSelectDayView?(dayView)
         if let controller = contentController {
-            presentedDate = dayView.date
-            delegate?.didSelectDayView?(dayView)
             controller.performedDayViewSelection(dayView) // TODO: Update to range selection
         }
     }
     
     func didDeSelectDayView(dayView: CVCalendarDayView) {
+        delegate?.didDeSelectDayView?(dayView)
         if let controller = contentController {
-            presentedDate = dayView.date
-            delegate?.didDeSelectDayView?(dayView)
             controller.performedDayViewSelection(dayView)
         }
     }

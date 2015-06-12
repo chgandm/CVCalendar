@@ -76,6 +76,18 @@ extension CVDate {
     public var identifier: String {
         return "\(day)\(month)\(year)"
     }
+    
+    public override func isEqual(object: AnyObject?) -> Bool {
+        if let object = object as? CVDate {
+            return identifier == object.identifier
+        } else {
+            return false
+        }
+    }
+    
+    public override var hash: Int {
+        return identifier.hashValue
+    }
 }
 
 private extension CVDate {
