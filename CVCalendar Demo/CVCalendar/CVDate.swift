@@ -45,7 +45,7 @@ public class CVDate: NSObject {
 }
 
 extension CVDate {
-    func convertedDate() -> NSDate? {
+    public func convertedDate() -> NSDate? {
         let calendar = NSCalendar.currentCalendar()
         let comps = Manager.componentsForDate(NSDate())
         
