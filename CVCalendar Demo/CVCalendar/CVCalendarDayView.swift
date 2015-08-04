@@ -152,6 +152,7 @@ extension CVCalendarDayView {
         
         dayLabel = UILabel()
         dayLabel!.text = String(date.day)
+        dayLabel!.accessibilityLabel = "\(date.day).\(date.month).\(date.year)"
         dayLabel!.textAlignment = NSTextAlignment.Center
         dayLabel!.frame = bounds
         
