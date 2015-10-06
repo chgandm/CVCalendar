@@ -49,7 +49,7 @@ extension ViewController: CVCalendarViewDelegate
         let ringLineWidth: CGFloat = 4.0
         let ringLineColour: UIColor = .blueColor()
         
-        var newView = UIView(frame: dayView.bounds)
+        let newView = UIView(frame: dayView.bounds)
         
         let diameter: CGFloat = (newView.bounds.width) - ringSpacing
         let radius: CGFloat = diameter / 2.0
@@ -63,7 +63,7 @@ extension ViewController: CVCalendarViewDelegate
         ringLayer.lineWidth = ringLineWidth
         ringLayer.strokeColor = ringLineColour.CGColor
         
-        var ringLineWidthInset: CGFloat = CGFloat(ringLineWidth/2.0) + ringInsetWidth
+        let ringLineWidthInset: CGFloat = CGFloat(ringLineWidth/2.0) + ringInsetWidth
         let ringRect: CGRect = CGRectInset(rect, ringLineWidthInset, ringLineWidthInset)
         let centrePoint: CGPoint = CGPointMake(ringRect.midX, ringRect.midY)
         let startAngle: CGFloat = CGFloat(-π/2.0)
@@ -87,7 +87,7 @@ extension ViewController: CVCalendarViewDelegate
 }
 
 
-extension ViewController: CVCalendarViewDelegate {
+extension ViewController {
     func presentationMode() -> CalendarMode {
         return .MonthView
     }
@@ -105,14 +105,12 @@ extension ViewController: CVCalendarViewDelegate {
     }
     
     func didSelectDayView(dayView: CVCalendarDayView) {
-        let date = dayView.date
-        println("\(calendarView.presentedDate.commonDescription) is selected!")
+        NSLog("\(calendarView.presentedDate.commonDescription) is selected!")
     }
     
     
     func didDeSelectDayView(dayView: CVCalendarDayView) {
-        let date = dayView.date
-        println("\(calendarView.presentedDate.commonDescription) is DE-selected!")
+        NSLog("\(calendarView.presentedDate.commonDescription) is DE-selected!")
     }
     
     func presentedDateUpdated(date: CVDate) {

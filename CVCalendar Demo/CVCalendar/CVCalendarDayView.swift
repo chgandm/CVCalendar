@@ -106,10 +106,10 @@ public class CVCalendarDayView: UIView {
         let weekdaysIn = weekView.weekdaysIn
         
         if let weekdaysOut = weekView.weekdaysOut {
-            if hasDayAtWeekdayIndex(weekdayIndex, weekdaysOut) {
+            if hasDayAtWeekdayIndex(weekdayIndex, weekdaysDictionary: weekdaysOut) {
                 isOut = true
                 day = weekdaysOut[weekdayIndex]![0]
-            } else if hasDayAtWeekdayIndex(weekdayIndex, weekdaysIn!) {
+            } else if hasDayAtWeekdayIndex(weekdayIndex, weekdaysDictionary: weekdaysIn!) {
                 day = weekdaysIn![weekdayIndex]![0]
             }
         } else {
@@ -138,7 +138,7 @@ public class CVCalendarDayView: UIView {
         return CVDate(day: day, month: month, week: week, year: year)
     }
     
-    required public init(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -240,7 +240,7 @@ extension CVCalendarDayView {
         if let delegate = calendarView.delegate {
             if let shouldShow = delegate.dotMarker?(shouldShowOnDayView: self) where shouldShow {
                 let color = isOut ? .grayColor() : delegate.dotMarker?(colorOnDayView: self)
-                let (width: CGFloat, height: CGFloat) = (13, 13)
+                let (width, height): (CGFloat, CGFloat) = (13, 13)
                 
                 var yOffset = bounds.height / 5
                 if let y = delegate.dotMarker?(moveOffsetOnDayView: self) {
@@ -352,8 +352,8 @@ extension CVCalendarDayView {
         let yDistance = radius * sin(angle)
         
         let center = circleView.center
-        var x = floor(cos(angle)) < 0 ? center.x - xDistance : center.x + xDistance
-        var y = center.y - yDistance
+        let x = floor(cos(angle)) < 0 ? center.x - xDistance : center.x + xDistance
+        let y = center.y - yDistance
         
         let result = CGPointMake(x, y)
         
@@ -473,7 +473,7 @@ extension CVCalendarDayView {
         setupDotMarker()
         dayLabel?.frame = bounds
         
-        var shouldShowDaysOut = calendarView.shouldShowWeekdaysOut!
+        let shouldShowDaysOut = calendarView.shouldShowWeekdaysOut!
         if !shouldShowDaysOut {
             if isOut {
                 hidden = true

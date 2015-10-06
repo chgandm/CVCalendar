@@ -40,7 +40,7 @@ public class CVCalendarView: UIView {
     var contentController: ContentViewController!
     var calendarMode: CalendarMode!
     
-    var (weekViewSize: CGSize?, dayViewSize: CGSize?)
+    var (weekViewSize, dayViewSize): (CGSize?, CGSize?)
     
     private var validated = false
     
@@ -185,7 +185,7 @@ public class CVCalendarView: UIView {
     }
 
     /// IB Initialization
-    required public init(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         hidden = true
     }
