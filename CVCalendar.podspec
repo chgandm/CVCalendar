@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 s.name = "CVCalendar"
-s.version = "1.0.8-multiselect-swift2"
+s.version = "1.0.8"
 s.summary = "A custom visual calendar for iOS 8 written in Swift. Forked and podified to allow multi-select."
 s.homepage = "https://github.com/Mozharovsky/CVCalendar"
 s.license = "MIT"
